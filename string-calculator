@@ -93,3 +93,67 @@ int StringCalculator::add(const std::string& numbers) {
 }
 
 
+// Adding test for negative numbers
+TEST(StringCalculator, ThrowsExceptionForNegativeNumbers) {
+    StringCalculator calculator;
+    EXPECT_THROW(calculator.add("-1,2"), std::invalid_argument);
+}
+
+TEST(StringCalculator, ThrowsExceptionWithAllNegativeNumbersListed) {
+    StringCalculator calculator;
+    try {
+        calculator.add("-1,-2,3");
+    } catch (const std::invalid_argument& e) {
+        EXPECT_STREQ(e.what(), "negative numbers not allowed: -1, -2");
+    }
+}
+
+// updating add method to throw exception for negative numbers
+#include <stdexcept>
+
+int StringCalculator::add(const std::string& numbers) {
+    if (numbers.empty()) return 0;
+
+    std::string delimiters = ",\n";
+    std::string nums = numbers;
+
+    if (numbers.rfind("//", 0) == 0) {
+        size_t delimiter_pos = numbers.find('\n');
+        delimiters = numbers.substr(2, delimiter_pos - 2);
+        nums = numbers.substr(delimiter_pos + 1);
+    }
+
+    std::vector<std::string> tokens;
+    std::string token;
+    size_t start = 0, end = 0;
+
+    while ((end = nums.find_first_of(delimiters, start)) != std::string::npos) {
+        tokens.push_back(nums.substr(start, end - start));
+        start = end + 1;
+    }
+    tokens.push_back(nums.substr(start));
+
+    int sum = 0;
+    std::vector<int> negativeNumbers;
+    for (const auto& num : tokens) {
+        if (!num.empty()) {
+            int n = std::stoi(num);
+            if (n < 0) {
+                negativeNumbers.push_back(n);
+            }
+            sum += n;
+        }
+    }
+
+    if (!negativeNumbers.empty()) {
+        std::string message = "negative numbers not allowed: ";
+        for (size_t i = 0; i < negativeNumbers.size(); ++i) {
+            if (i > 0) message += ", ";
+            message += std::to_string(negativeNumbers[i]);
+        }
+        throw std::invalid_argument(message);
+    }
+
+    return sum;
+}
+
