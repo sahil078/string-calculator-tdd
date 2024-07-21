@@ -1,0 +1,23 @@
+// tests/StringCalculatorTest.cpp
+#include<gtest/gtest.h>
+#include "StringCalculator.h"
+#include<iostream>
+#include <string>
+
+using namespace std;
+
+TEST(StringCalculator, ReturnsZeroForEmptyString) {
+    StringCalculator calculator;
+    EXPECT_EQ(calculator.add(""), 0);
+}
+
+// implementation of string calculation
+class StringCalculator {
+public:
+    int add(const string& numbers);
+};
+
+
+int StringCalculator::add(const std::string& numbers) {
+    return 0;
+}
