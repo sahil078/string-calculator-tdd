@@ -3,6 +3,8 @@
 #include "StringCalculator.h"
 #include<iostream>
 #include <string>
+#include <vector>
+#include <string>
 
 using namespace std;
 
@@ -20,4 +22,34 @@ public:
 
 int StringCalculator::add(const std::string& numbers) {
     return 0;
+}
+
+TEST(StringCalculator, ReturnsNumberForSingleInput) {
+    StringCalculator calculator;
+    EXPECT_EQ(calculator.add("1"), 1);
+}
+
+TEST(StringCalculator, SumsTwoNumbersSeparatedByComma) {
+    StringCalculator calculator;
+    EXPECT_EQ(calculator.add("1,2"), 3);
+}
+
+
+int StringCalculator::add(const std::string& numbers) {
+    if (numbers.empty()) return 0;
+
+    std::vector<std::string> tokens;
+    std::stringstream ss(numbers);
+    std::string token;
+
+    while (std::getline(ss, token, ',')) {
+        tokens.push_back(token);
+    }
+
+    int sum = 0;
+    for (const auto& num : tokens) {
+        sum += std::stoi(num);
+    }
+
+    return sum;
 }
