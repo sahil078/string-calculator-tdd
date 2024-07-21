@@ -6,7 +6,6 @@
 #include <vector>
 #include <string>
 
-using namespace std;
 
 TEST(StringCalculator, ReturnsZeroForEmptyString) {
     StringCalculator calculator;
@@ -53,3 +52,44 @@ int StringCalculator::add(const std::string& numbers) {
 
     return sum;
 }
+
+// Adding test to calculate the string
+TEST(StringCalculator, SupportsCustomDelimiter) {
+    StringCalculator calculator;
+    EXPECT_EQ(calculator.add("//;\n1;2"), 3);
+}
+
+// updating the add method
+int StringCalculator::add(const std::string& numbers) {
+    if (numbers.empty()) return 0;
+
+    std::string delimiters = ",\n";
+    std::string nums = numbers;
+
+    if (numbers.rfind("//", 0) == 0) { // Check if string starts with "//"
+        size_t delimiter_pos = numbers.find('\n');
+        delimiters = numbers.substr(2, delimiter_pos - 2);
+        nums = numbers.substr(delimiter_pos + 1);
+    }
+
+    std::vector<std::string> tokens;
+    std::string token;
+    size_t start = 0, end = 0;
+
+    while ((end = nums.find_first_of(delimiters, start)) != std::string::npos) {
+        tokens.push_back(nums.substr(start, end - start));
+        start = end + 1;
+    }
+    tokens.push_back(nums.substr(start));
+
+    int sum = 0;
+    for (const auto& num : tokens) {
+        if (!num.empty()) {
+            sum += std::stoi(num);
+        }
+    }
+
+    return sum;
+}
+
+
